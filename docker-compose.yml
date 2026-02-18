@@ -1,0 +1,34 @@
+services:
+  web:
+    build: .
+    user: "1000:1000"
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+      - ./journals:/rails/journals
+    env_file: .env
+    environment:
+      - DATABASE_URL=postgres://sparschwein:sparschwein@db:5432/sparschwein_development
+
+  db:
+    image: postgres:16
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: sparschwein
+      POSTGRES_PASSWORD: sparschwein
+      POSTGRES_DB: sparschwein_development
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sparschwein"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  bundle_cache:
