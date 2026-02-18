@@ -37,3 +37,5 @@
 /journals/*
 !/journals/.keep
 
+# Ignore working docs
+docs/PR_DESCRIPTION.md
